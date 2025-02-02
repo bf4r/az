@@ -4,6 +4,7 @@ Flexible autonomous AI agent
 ## Requirements
 - .NET 9.0 Runtime
 - Python 3.x
+- OpenRouter API key and credits
 
 ## Note
 This README is temporary and a more comprehensive one is coming soon, but here is a very brief guide:
