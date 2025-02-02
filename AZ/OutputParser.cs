@@ -1,4 +1,4 @@
-namespace az;
+namespace az.AZ;
 
 using System.Text;
 using System.Text.RegularExpressions;

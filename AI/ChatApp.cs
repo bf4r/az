@@ -27,19 +27,19 @@ public class ChatApp
             if (!string.IsNullOrEmpty(input))
             {
                 Messages.Add(new("user", input));
-                var response = Send(Messages, config).GetAwaiter().GetResult();
+                var response = Send(Messages, config, (x) => Console.Write(x)).GetAwaiter().GetResult();
                 Messages.Add(new("assistant", response));
             }
         }
     }
-    static async Task<string> Send(List<AIMessage> messages, AIConfig config)
+    public static async Task<string> Send(List<AIMessage> messages, AIConfig config, Action<string>? onToken = null)
     {
         var cts = new CancellationTokenSource();
         var sb = new StringBuilder();
         await foreach (var token in API.GetStreamAsync(messages, config, cts.Token))
         {
             sb.Append(token);
-            Console.Write(token);
+            onToken?.Invoke(token);
         }
         Console.WriteLine();
         return sb.ToString();
