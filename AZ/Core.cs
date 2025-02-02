@@ -12,8 +12,7 @@ public static class Core
 
         var config = new AIConfig(
                 apiKey: apiKey,
-                model: "meta-llama/llama-3-70b-instruct",
-                // model: "meta-llama/llama-3.2-3b-instruct",
+                model: "meta-llama/llama-3.3-70b-instruct",
                 baseUrl: "https://openrouter.ai/api/v1",
                 stream: true
                 );
@@ -44,20 +43,15 @@ public static class Core
             {
                 var code = tags["python"];
                 bool runCode = false;
-                while (true)
+                Console.Write("Run Python code? Or tell me what I did wrong! (y/n/...): ");
+                var input = Console.ReadLine() ?? "";
+                if (input == "y") runCode = true;
+                else if (input == "n") runCode = false;
+                else
                 {
-                    Console.Write("Proceed? (y/n): ");
-                    var input = Console.ReadLine() ?? "";
-                    if (input.StartsWith("y"))
-                    {
-                        runCode = true;
-                        break;
-                    }
-                    else if (input.StartsWith("n"))
-                    {
-                        runCode = false;
-                        break;
-                    }
+                    outputs = "<feedback>\n{input}\n</feedback>";
+                    runCode = false;
+                    continue;
                 }
                 if (runCode)
                 {
