@@ -6,20 +6,14 @@ public static class Core
 {
     public static void Run(string request)
     {
-        Console.WriteLine(request);
-        var apiKey = Environment.GetEnvironmentVariable("AI_API_KEY");
-        if (apiKey == null) throw new Exception("API key is not set. Please set the AI_API_KEY environment variable. This will soon be moved to data/my/config/keys.json.");
-
-        var config = new AIConfig(
-                apiKey: apiKey,
-                model: "meta-llama/llama-3.3-70b-instruct",
-                baseUrl: "https://openrouter.ai/api/v1",
-                stream: true
-                );
-
-
         var projDir = Program.GetProjectDirectory();
-        var systemMdPath = Path.Combine(projDir, "system.md");
+        Manager.CreateSession();
+        Console.WriteLine("New session: " + Manager.SessionID);
+        Console.WriteLine(request);
+
+        var config = AIConfig.GetCurrent() ?? AIConfig.GetDefault();
+
+        var systemMdPath = Path.Combine(projDir, "data", "my", "config", "system.md");
         var systemMessage = File.ReadAllText(systemMdPath);
 
         var messages = new List<AIMessage>();
@@ -35,7 +29,7 @@ public static class Core
                 messages.Add(new AIMessage("user", outputs));
             }
             Console.WriteLine("Sending request...");
-            var response = ChatApp.Send(messages, config, (x) => Console.Write(x)).Result;
+            var response = ChatApp.Send(messages, config!, (x) => Console.Write(x)).Result;
             Console.WriteLine("Done!");
             messages.Add(new AIMessage("assistant", response));
             var tags = OutputParser.GetTags(response);

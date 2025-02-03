@@ -8,17 +8,8 @@ public class ChatApp
     public void Start()
     {
         if (Messages == null) Messages = new();
-        var apiKey = Environment.GetEnvironmentVariable("AI_API_KEY");
-        if (apiKey == null) throw new Exception("API key is not set. Please set the AI_API_KEY environment variable. This will soon be moved to data/my/config/keys.json.");
-        var config = new AIConfig(
-                apiKey: apiKey,
-                // testing model
-                model: "meta-llama/llama-3.2-3b-instruct",
-                // for actual use
-                // model: "openai/gpt-4o-mini",
-                baseUrl: "https://openrouter.ai/api/v1",
-                stream: true
-                );
+        var config = AIConfig.GetCurrent() ?? AIConfig.GetDefault();
+        if (string.IsNullOrEmpty(config.GetAPIKey())) throw new Exception("API key is not set. Please set the AI_API_KEY environment variable. This will soon be moved to data/my/config/keys.json.");
         Messages.Add(new("system", "You are a helpful assistant."));
         while (true)
         {
